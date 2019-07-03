@@ -1,7 +1,11 @@
 {% extends 'account/base.html' %}
 {% block body_block %}
 <form  method="post">
-    {{ form.as_p }}
+    <label for="phone">Phone:</label>
+    <input type="text" name="phone" value="{{ phone }}"><br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="Password" ><br>
     {% csrf_token %}
     <input type="submit" value="Login">
 </form>

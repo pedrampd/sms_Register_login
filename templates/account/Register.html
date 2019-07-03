@@ -1,7 +1,13 @@
 {% extends 'account/base.html' %}
 {% block body_block %}
 <form  method="post">
-    {{ form1.as_p }}
+    <label for="phone">Phone:</label>
+    <input type="text" name="phone" value="{{ phone }}"><br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="Password" ><br>
+    <label for="confirm">Confirm password:</label>
+    <input type="password" name="confirm" ><br>
     {% csrf_token %}
     <input type="submit" value="Register">
     <INPUT TYPE="hidden" NAME="redirect" VALUE={% url 'verify' %}>

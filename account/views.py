@@ -11,23 +11,23 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def register(request):
     registered = False
-
+    phone = request.session['phone']
     form = RegisterForm()
     if request.method == 'POST':
         form = RegisterForm(data=request.POST)
         if form.is_valid():
-            # TODO send an sms to confirm
 
             user = form.save(commit=False)
             user.set_password(user.password)
-            request.session['phone'] = user.phone
+
             request.session['password'] = user.password
             return redirect('verify')
 
-    return render(request,'account/Register.html',context={'form1':form})
+    return render(request,'account/Register.html',context={'form1':form,'phone':phone})
 
 def user_login(request):
     lform = LoginForm()
+    session_phone = request.session['phone']
     if request.method == 'POST':
         phone = request.POST.get('phone')
         password = request.POST.get('password')
@@ -41,15 +41,21 @@ def user_login(request):
             else:
                 return HttpResponse("Your account is not active.")
         else:
-            print("Someone tried to login and failed.")
-            print("They used phone number : {} and password: {}".format(phone,password))
             return HttpResponse("Invalid login details supplied.")
 
     else:
-        #Nothing has been provided for username or password.
-        return render(request, 'account/login2.html', context={'form':lform})
+        return render(request, 'account/login2.html', context={'form':lform,'phone':session_phone } )
 
 def index(request):
+    if request.method == 'POST':
+        request.session['phone'] = request.POST['phone']
+        phone = request.POST['phone']
+
+        if User.objects.filter(phone=phone):
+            return redirect('login')
+        else:
+            return redirect('register')
+
     return render(request,'account/index.html')
 
 @is_registered

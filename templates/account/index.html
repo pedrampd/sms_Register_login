@@ -1,4 +1,12 @@
 {% extends 'account/base.html' %}
 {% block body_block %}
-<h1>Home!</h1>
+    <h1> Enter your Phone Number</h1>
+<form  method="post" action="{% url 'index' %}">
+
+    {% csrf_token %}
+    <input type="text" name="phone">
+    <input type="submit" value="Send">
+
+
+</form>
 {% endblock %}
