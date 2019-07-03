@@ -18,7 +18,7 @@ def register(request):
         if form.is_valid():
             # TODO send an sms to confirm
 
-            user = form.save()
+            user = form.save(commit=False)
             user.set_password(user.password)
             request.session['phone'] = user.phone
             request.session['password'] = user.password
@@ -58,8 +58,19 @@ def verify(request):
     password = request.session.get('password')
     user = User(phone=phone,password=password)
     api = KavenegarAPI('4B4B49434E56576475475A67387A6D61426150486F4D584E306B686469497A6176672F7644563651536A303D')
-    params = {'sender': '1000596446', 'receptor': '0'+ str(phone), 'message': 'Verification Code : {}'.format(randint(100000,999999))}
+    #TODO actually buy the full servis in order to send sms to all users not just yourself!
+    key = randint(100000,999999)
+    params = {'sender': '1000596446', 'receptor': '09190357713', 'message': 'Verification Code : {}'.format(key)}
     response = api.sms_send(params)
+    if request.method == 'POST':
+        user_key = request.POST['Verification']
+        print(user_key)
+        if user_key == key:
+            user.save()
+            return redirect(index)
+
+        else:
+            pass
     return render(request,'account/phone_verify.html')
 # @register
 # def verify(request):

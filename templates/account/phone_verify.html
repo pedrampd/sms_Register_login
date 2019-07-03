@@ -1,9 +1,10 @@
 {% extends 'account/base.html' %}
 {% block body_block %}
     <h1> Enter your verification code</h1>
-{#<form  method="post">#}
-{#    {{#}
-{#    {% csrf_token %} form.as_p }}#}
-{#    <input type="submit" value="Send">#}
-{#</form>#}
+<form  method="post" action="{% url 'verify' %}">
+
+    {% csrf_token %}
+    <input type="text" name="Verification">
+    <input type="submit" value="Send">
+</form>
 {% endblock %}
