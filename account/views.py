@@ -50,7 +50,7 @@ def user_login(request):
             return HttpResponse("Invalid login details supplied.")
 
     else:
-        return render(request, 'account/login2.html', context={'form':lform,'phone':session_phone } )
+        return render(request, 'account/login2.html', context={'form':lform} )
 
 def index(request):
     if request.method == 'POST':
@@ -75,7 +75,6 @@ def verify(request):
     user.set_password(user.password)
     user.name = request.session['name']
     user.last_name = request.session['last_name']
-
     # print(User.objects.get(phone=phone))
     api = KavenegarAPI('4B4B49434E56576475475A67387A6D61426150486F4D584E306B686469497A6176672F7644563651536A303D')
     #TODO actually buy the full servis in order to send sms to all users not just yourself!
@@ -85,13 +84,14 @@ def verify(request):
         api = KavenegarAPI('Your APIKey')
         params = {'sender': '1000596446', 'receptor': '09190357713', 'message': 'Verification Code : {}'.format(key)}
         response = api.sms_send(params)
-        print(response)
     except APIException as e:
         print(e)
     except HTTPException as e:
         print(e)
     if request.method == 'POST':
+
         user_key = request.POST['Verification']
+
         if user_key == key:
             user.save()
             return redirect(index)

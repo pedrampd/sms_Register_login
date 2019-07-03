@@ -2,9 +2,6 @@
 {% block body_block %}
 <form  method="post">
     {% csrf_token %}
-    <label for="phone">Phone:</label>
-    <input type="text" name="phone" value="{{ phone }}"><br>
-
     {{ form1.as_p }}
 
     <input type="submit" value="Register">
