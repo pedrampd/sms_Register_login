@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = ( 'account.auth_backend.backend', )
+print(os.path.join(os.path.join(BASE_DIR,'account'),'auth_backend.py'))
+AUTH_USER_MODEL = 'account.User'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

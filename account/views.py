@@ -8,7 +8,10 @@ from .models import User
 from kavenegar import *
 from random import randint
 from django.contrib.auth.decorators import login_required
+from .auth_backend import backend
+from ratelimit import limits
 # Create your views here.
+
 def register(request):
     registered = False
     phone = request.session['phone']
@@ -19,12 +22,15 @@ def register(request):
 
             user = form.save(commit=False)
             user.set_password(user.password)
-
+            user.phone = request.POST['phone']
             request.session['password'] = user.password
+            request.session['name'] = request.POST['name']
+            request.session['last_name'] = request.POST['last_name']
             return redirect('verify')
 
     return render(request,'account/Register.html',context={'form1':form,'phone':phone})
 
+@limits(calls = 3, period=3600)
 def user_login(request):
     lform = LoginForm()
     session_phone = request.session['phone']
@@ -58,28 +64,39 @@ def index(request):
 
     return render(request,'account/index.html')
 
+@limits(calls = 3, period=3600)
 @is_registered
 def verify(request):
+
     phone = request.session.get('phone')
     password = request.session.get('password')
     user = User(phone=phone,password=password)
+    user.is_active =True
+    user.set_password(user.password)
+    user.name = request.session['name']
+    user.last_name = request.session['last_name']
+
+    # print(User.objects.get(phone=phone))
     api = KavenegarAPI('4B4B49434E56576475475A67387A6D61426150486F4D584E306B686469497A6176672F7644563651536A303D')
     #TODO actually buy the full servis in order to send sms to all users not just yourself!
     key = randint(100000,999999)
-    params = {'sender': '1000596446', 'receptor': '09190357713', 'message': 'Verification Code : {}'.format(key)}
-    response = api.sms_send(params)
+    # I dont have enough account charge left in my kavenegar account so the there will be no sms sent
+    try:
+        api = KavenegarAPI('Your APIKey')
+        params = {'sender': '1000596446', 'receptor': '09190357713', 'message': 'Verification Code : {}'.format(key)}
+        response = api.sms_send(params)
+        print(response)
+    except APIException as e:
+        print(e)
+    except HTTPException as e:
+        print(e)
     if request.method == 'POST':
         user_key = request.POST['Verification']
-        print(user_key)
         if user_key == key:
             user.save()
             return redirect(index)
 
-        else:
-            pass
     return render(request,'account/phone_verify.html')
-# @register
-# def verify(request):
 
 @login_required
 def logout_view(request):

@@ -14,9 +14,6 @@ def validate_num(value):
 
 class UserManager(BaseUserManager):
     def create_user(self, phone, password=None):
-        """
-        Creates and saves a User with the given email and password.
-        """
         if not phone:
             raise ValueError('Users must have a phone number')
         if not password:
@@ -27,9 +24,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     def create_superuser(self, phone, password):
-        """
-        Creates and saves a superuser with the given email and password.
-        """
         user = self.create_user(phone=phone,password=password)
         user.is_admin = True
         user.is_staff = True
@@ -40,6 +34,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     email = None
     phone = models.IntegerField(unique=True,validators=[validate_num],primary_key=True)
+    name = models.CharField(default=' ',max_length=100)
+    last_name = models.CharField(default=' ',max_length=100)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -55,6 +51,8 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
     objects = UserManager()
+
+
 
 
 
