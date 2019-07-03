@@ -45,11 +45,9 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     USERNAME_FIELD = 'phone'
     def get_full_name(self):
-        # The user is identified by their email address
         return self.phone
 
     def get_short_name(self):
-        # The user is identified by their email address
         return self.phone
     def has_perm(self, perm, obj=None):
         return True

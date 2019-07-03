@@ -4,5 +4,6 @@
     {{ form1.as_p }}
     {% csrf_token %}
     <input type="submit" value="Register">
+    <INPUT TYPE="hidden" NAME="redirect" VALUE={% url 'verify' %}>
 </form>
 {% endblock %}

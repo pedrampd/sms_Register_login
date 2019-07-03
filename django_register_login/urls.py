@@ -21,4 +21,5 @@ urlpatterns = [
     path('register/',views.register, name = 'register'),
     path('login/',views.user_login, name = 'login'),
     path('',views.index,name='index'),
+    path('verify/',views.verify,name='verify'),
 ]
